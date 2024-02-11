@@ -1,5 +1,3 @@
-function generateBoard() {}
-
 const width = 640;
 const height = 512;
 const midX = width / 2;
@@ -7,6 +5,13 @@ const midY = height / 2;
 const gridSize = 10;
 const squareSize = 20;
 const boardThickness = 10;
+
+// Game number
+const game = 510256994;
+
+const x: number[] = [];
+const y: number[] = [];
+const z: number[] = [];
 
 const drawBackground = (ctx: CanvasRenderingContext2D) => {
   const gradient = ctx.createLinearGradient(0, 0, 640, 512);
@@ -43,13 +48,22 @@ const drawTileEdge = (
   ctx.fill();
 };
 
-export function gemsGame(ctx: CanvasRenderingContext2D) {
-  const x = [];
-  const y = [];
-  const z = [];
+const generateBoard = () => {
+  for (let n = 1; n <= gridSize ** 2; n++) {
+    x[n] = -(n - (1 % gridSize) + 1) + gridSize + 1;
+    y[n] = Math.floor((gridSize - 1 + n) / gridSize);
+    z[n] = Math.floor((game / n) % 15);
+    if (z[n] >= 12) {
+      z[n] = 1;
+    } else if (z[n] > 5 || z[n] === 0) {
+      z[n] = 10;
+    }
+  }
+};
 
-  // Game number
-  const game = 510256994;
+export function gemsGame(ctx: CanvasRenderingContext2D) {
+  let cursorX = 1;
+  let cursorY = 1;
 
   drawBackground(ctx);
   generateBoard();
