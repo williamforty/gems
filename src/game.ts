@@ -283,9 +283,6 @@ export function gemsGame(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D
 ) {
-  let cursorX = 1;
-  let cursorY = 1;
-
   canvas.addEventListener("mousemove", handleMouseMove);
 
   function handleMouseMove(event: MouseEvent) {
@@ -303,16 +300,38 @@ export function gemsGame(
     cursorY = 0;
   }
 
-  drawBackground(ctx);
-  generateBoard();
-  drawStuff(ctx);
+  let cursorX = 1;
+  let cursorY = 1;
 
-  // Draw the point at cursor position
-  ctx.fillStyle = "red";
-  ctx.fillRect(cursorX, cursorY, squareSize, squareSize);
+  function gameLoop() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Set RGB color for vertex 1 of the first triangle
-  const dx = gridSize * squareSize;
-  drawTileEdge(ctx, "rgb(50, 40, 0)", midX, midY, dx);
-  drawTileEdge(ctx, "rgb(70, 50, 0)", midX, midY, -dx);
+    // Draw the game elements
+    drawBackground(ctx);
+    generateBoard();
+    drawStuff(ctx);
+
+    // Draw the point at cursor position
+    ctx.fillStyle = "green";
+    drawPath(ctx, [
+      cursorX,
+      cursorY,
+      cursorX,
+      cursorY + 25,
+      cursorX + 15,
+      cursorY + 20,
+    ]);
+
+    // Set RGB color for vertex 1 of the first triangle
+    const dx = gridSize * squareSize;
+    drawTileEdge(ctx, "rgb(50, 40, 0)", midX, midY, dx);
+    drawTileEdge(ctx, "rgb(70, 50, 0)", midX, midY, -dx);
+
+    // Request the next animation frame
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Start the game loop
+  gameLoop();
 }
