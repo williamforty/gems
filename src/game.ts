@@ -44,13 +44,7 @@ const drawBackground = (ctx: CanvasRenderingContext2D) => {
   gradient.addColorStop(1, "rgb(50, 0, 0)");
 
   ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(640, 0);
-  ctx.lineTo(640, 512);
-  ctx.lineTo(0, 512);
-  ctx.closePath();
-  ctx.fill();
+  drawPath(ctx, [0, 0, 640, 0, 640, 512, 0, 512]);
 };
 
 const drawTileEdge = (
@@ -213,8 +207,6 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
         bi = 2.2;
       }
 
-      const pys = py - squareSize;
-
       ctx.fillStyle = setrgb(r * 7 * i, g * 7 * i, b * 7 * i);
       drawPath(ctx, [
         px - squareSize * 0.4,
@@ -287,13 +279,37 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
   }
 };
 
-export function gemsGame(ctx: CanvasRenderingContext2D) {
+export function gemsGame(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D
+) {
   let cursorX = 1;
   let cursorY = 1;
+
+  canvas.addEventListener("mousemove", handleMouseMove);
+
+  function handleMouseMove(event: MouseEvent) {
+    const rect = canvas.getBoundingClientRect();
+    cursorX = event.clientX - rect.left;
+    cursorY = event.clientY - rect.top;
+
+    console.log(cursorX, cursorY);
+  }
+
+  canvas.addEventListener("mouseleave", handleMouseLeave);
+
+  function handleMouseLeave() {
+    cursorX = 0;
+    cursorY = 0;
+  }
 
   drawBackground(ctx);
   generateBoard();
   drawStuff(ctx);
+
+  // Draw the point at cursor position
+  ctx.fillStyle = "red";
+  ctx.fillRect(cursorX, cursorY, squareSize, squareSize);
 
   // Set RGB color for vertex 1 of the first triangle
   const dx = gridSize * squareSize;
