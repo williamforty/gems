@@ -166,7 +166,10 @@ function drawCursorFront(ctx: CanvasRenderingContext2D) {
    */
   drawPath(
     ctx,
-    [[px - squareSize, py], [px - squareSize], [py - squareSize * 1.4]],
+    [
+      [px - squareSize, py],
+      [px - squareSize, py - squareSize * 1.4],
+    ],
     false
   );
   drawPath(
