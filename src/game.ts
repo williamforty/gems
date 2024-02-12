@@ -5,11 +5,11 @@ const midY = height / 2;
 const gridSize = 9;
 const squareSize = 320 / (gridSize + 1);
 const boardThickness = 10;
-const cursorX = 0;
-const cursorY = 0;
+let cursorX = 1;
+let cursorY = 4;
 const targetCursorX = 0;
 const targetCursorY = 0;
-const c = 0;
+let c = 0;
 
 // Game number
 const game = 510256994;
@@ -33,7 +33,7 @@ const drawPath = (
     ctx.lineTo(x, y);
   }
   ctx.closePath();
-  if (fill) ctx.fill();
+  fill ? ctx.fill() : ctx.stroke();
 };
 
 const drawBackground = (ctx: CanvasRenderingContext2D) => {
@@ -83,6 +83,99 @@ const generateBoard = () => {
 
 const setrgb = (r: number, g: number, b: number) => `rgb(${r}, ${g}, ${b})`;
 
+function drawCursorBack(ctx: CanvasRenderingContext2D) {
+  // Drawing back of the cursor
+
+  const px = cursorX * squareSize + cursorY * squareSize;
+  const py = 256 + (cursorY * squareSize) / 2 - (cursorX * squareSize) / 2;
+
+  ctx.fillStyle =
+    (cursorX + cursorY) % 2 ? setrgb(0, 0, 160) : setrgb(160, 160, 160);
+
+  drawPath(ctx, [
+    px - squareSize,
+    py,
+    px,
+    py - 0.5 * squareSize,
+    px + squareSize,
+    py,
+  ]);
+  drawPath(ctx, [
+    px - squareSize,
+    py,
+    px,
+    py + 0.5 * squareSize,
+    px + squareSize,
+    py,
+  ]);
+
+  ctx.fillStyle = setrgb(255, 255, 255);
+  drawPath(ctx, [px - squareSize, py, px, py - 0.5 * squareSize], false);
+  drawPath(ctx, [px + squareSize, py, px, py - 0.5 * squareSize]), false;
+  drawPath(ctx, [px, py - squareSize * 0.5, px, py - squareSize * 1.9], false);
+  drawPath(ctx, [px + squareSize, py, px, py - 0.5 * squareSize], false);
+  drawPath(ctx, [px, py - squareSize * 0.5, px, py - squareSize * 1.9], false);
+}
+
+function drawCursorFront(ctx: CanvasRenderingContext2D) {
+  const px = cursorX * squareSize + cursorY * squareSize;
+  const py = 256 + (cursorY * squareSize) / 2 - (cursorX * squareSize) / 2;
+
+  ctx.strokeStyle = setrgb(255, 255, 255);
+  drawPath(ctx, [px, py + squareSize * 0.5, px, py - squareSize * 0.9], false);
+  /*
+  drawPath(
+    ctx,
+    [px + squareSize, py, px + squareSize, py - squareSize * 1.4],
+    false
+  );
+  */
+  /*
+   */
+  drawPath(
+    ctx,
+    [px - squareSize, py, px - squareSize, py - squareSize * 1.4],
+    false
+  );
+  drawPath(
+    ctx,
+    [px - squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+    false
+  );
+  drawPath(
+    ctx,
+    [px + squareSize, py, px + squareSize, py - squareSize * 1.4],
+    false
+  );
+  drawPath(
+    ctx,
+    [px - squareSize, py, px - squareSize, py - squareSize * 1.4],
+    false
+  ),
+    drawPath(
+      ctx,
+      [px - squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+      false
+    );
+  drawPath(
+    ctx,
+    [px - squareSize, py - squareSize * 1.4, px, py - 0.9 * squareSize],
+    false
+  );
+  drawPath(ctx, [px - squareSize, py, px, py + squareSize * 0.5], false);
+  drawPath(
+    ctx,
+    [px + squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+    false
+  );
+  drawPath(
+    ctx,
+    [px + squareSize, py - squareSize * 1.4, px, py - 0.9 * squareSize],
+    false
+  );
+  drawPath(ctx, [px + squareSize, py, px, py + squareSize * 0.5], false);
+}
+
 const drawStuff = (ctx: CanvasRenderingContext2D) => {
   for (let n = 1; n <= gridSize * gridSize; n++) {
     const px = x[n] * squareSize + y[n] * squareSize;
@@ -112,11 +205,13 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
   for (let n = 1; n <= gridSize * gridSize; n++) {
     let i;
 
+    c = 16384;
+
     if (
       (c & 16384) === 16384 &&
       n === targetCursorY * gridSize - targetCursorX + 1
     ) {
-      // drawing_target_cursors_back();
+      drawCursorBack(ctx);
       i = 1.3;
     } else if (n === cursorY * gridSize - cursorX + 1) {
       // drawing_cursors_back();
@@ -125,8 +220,8 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
       i = 1;
     }
 
-    const px = x[n] * squareSize + y[n] * squareSize;
-    const py = (y[n] * squareSize) / 2 - (x[n] * squareSize) / 2;
+    const px = (x[n] + y[n]) * squareSize;
+    const py = ((y[n] - x[n]) * squareSize) / 2;
 
     if (z[n] === 10) {
       ctx.fillStyle = setrgb(80 * i, 80 * i, 80 * i);
@@ -264,18 +359,16 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
       ]);
     }
 
-    /*
     if (
       (c & 16384) === 16384 &&
       n === targetCursorY * gridSize - targetCursorX + 1
     ) {
-      drawing_target_cursors_front();
+      // drawing_target_cursors_front();
     }
 
-    if (n === cursor_y * gridSize - cursor_x + 1) {
-      drawing_cursors_front();
+    if (n === cursorY * gridSize - cursorX + 1) {
+      drawCursorFront(ctx);
     }
-    */
   }
 };
 
@@ -287,21 +380,22 @@ export function gemsGame(
 
   function handleMouseMove(event: MouseEvent) {
     const rect = canvas.getBoundingClientRect();
-    cursorX = event.clientX - rect.left;
-    cursorY = event.clientY - rect.top;
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top - 256 + 10;
 
-    console.log(cursorX, cursorY);
+    cursorX = -Math.floor((2 * mouseY - mouseX) / (2 * squareSize));
+    cursorY = Math.floor((2 * mouseY + mouseX) / (2 * squareSize));
   }
 
   canvas.addEventListener("mouseleave", handleMouseLeave);
 
   function handleMouseLeave() {
-    cursorX = 0;
-    cursorY = 0;
+    mouseX = 0;
+    mouseY = 0;
   }
 
-  let cursorX = 1;
-  let cursorY = 1;
+  let mouseX = 1;
+  let mouseY = 1;
 
   function gameLoop() {
     // Clear the canvas
@@ -311,17 +405,6 @@ export function gemsGame(
     drawBackground(ctx);
     generateBoard();
     drawStuff(ctx);
-
-    // Draw the point at cursor position
-    ctx.fillStyle = "green";
-    drawPath(ctx, [
-      cursorX,
-      cursorY,
-      cursorX,
-      cursorY + 25,
-      cursorX + 15,
-      cursorY + 20,
-    ]);
 
     // Set RGB color for vertex 1 of the first triangle
     const dx = gridSize * squareSize;
