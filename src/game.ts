@@ -102,7 +102,7 @@ function drawCursorBack(ctx: CanvasRenderingContext2D) {
     [px + squareSize, py],
   ]);
 
-  ctx.fillStyle = setrgb(255, 255, 255);
+  ctx.strokeStyle = setrgb(0, 255, 255);
   drawPath(
     ctx,
     [
@@ -111,11 +111,6 @@ function drawCursorBack(ctx: CanvasRenderingContext2D) {
     ],
     false
   );
-  drawPath(ctx, [
-    [px + squareSize, py],
-    [px, py - 0.5 * squareSize],
-  ]),
-    false;
   drawPath(
     ctx,
     [
@@ -129,14 +124,6 @@ function drawCursorBack(ctx: CanvasRenderingContext2D) {
     [
       [px + squareSize, py],
       [px, py - 0.5 * squareSize],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px, py - squareSize * 0.5],
-      [px, py - squareSize * 1.9],
     ],
     false
   );
@@ -155,116 +142,33 @@ function drawCursorFront(ctx: CanvasRenderingContext2D) {
     ],
     false
   );
-  /*
-  drawPath(
-    ctx,
-    [px + squareSize, py, px + squareSize, py - squareSize * 1.4],
-    false
-  );
-  */
-  /*
-   */
+  const left = px - squareSize;
+  const right = px + squareSize;
+  const top = py - squareSize * 1.4;
+  const sqhalf = squareSize * 0.5;
+
+  ctx.strokeStyle = setrgb(255, 255, 255);
   drawPath(
     ctx,
     [
-      [px - squareSize, py],
-      [px - squareSize, py - squareSize * 1.4],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px - squareSize, py - squareSize * 1.4],
-      [px, py - 1.9 * squareSize],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px + squareSize, py],
-      [px + squareSize, py - squareSize * 1.4],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px - squareSize, py],
-      [px - squareSize, py - squareSize * 1.4],
-    ],
-    false
-  ),
-    drawPath(
-      ctx,
-      [
-        [px - squareSize, py - squareSize * 1.4],
-        [px, py - 1.9 * squareSize],
-      ],
-      false
-    );
-  drawPath(
-    ctx,
-    [
-      [px - squareSize, py - squareSize * 1.4],
-      [px, py - 0.9 * squareSize],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px - squareSize, py],
-      [px, py + squareSize * 0.5],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px + squareSize, py - squareSize * 1.4],
-      [px, py - 1.9 * squareSize],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px + squareSize, py - squareSize * 1.4],
-      [px, py - 0.9 * squareSize],
-    ],
-    false
-  );
-  drawPath(
-    ctx,
-    [
-      [px + squareSize, py],
-      [px, py + squareSize * 0.5],
+      [px, py + sqhalf],
+      [left, py],
+      [left, top],
+      [px, top - sqhalf],
+      [right, top],
+      [right, py],
+      [px, py + sqhalf],
+      [px, top + sqhalf],
+      [right, top],
+      [px, top + sqhalf],
+      [left, top],
+      [px, top + sqhalf],
     ],
     false
   );
 }
 
 const drawStuff = (ctx: CanvasRenderingContext2D) => {
-  for (let n = 1; n <= gridSize * gridSize; n++) {
-    const px = x[n] * squareSize + y[n] * squareSize;
-    const py = (y[n] * squareSize) / 2 - (x[n] * squareSize) / 2;
-
-    ctx.fillStyle =
-      (x[n] + y[n]) % 2 === 0 ? setrgb(100, 70, 50) : setrgb(100, 100, 100);
-    drawPath(ctx, [
-      [px - squareSize, 256 + py],
-      [px + squareSize, 256 + py],
-      [px, 256 + py - squareSize / 2],
-    ]);
-    drawPath(ctx, [
-      [px - squareSize, 256 + py],
-      [px + squareSize, 256 + py],
-      [px, 256 + py + squareSize / 2],
-    ]);
-  }
-
   // Drawing the items
   for (let n = 1; n <= gridSize * gridSize; n++) {
     let i;
@@ -310,87 +214,7 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
         [px, 256 + py],
       ]);
     } else if (z[n] !== 0) {
-      let r = 0,
-        g = 0,
-        b = 0,
-        ri = 0,
-        gi = 0,
-        bi = 0;
-
-      if (z[n] === 1) {
-        r = 5;
-        g = 5;
-        b = 5;
-        ri = 2.2;
-        gi = 2.2;
-        bi = 2.2;
-      } else if (z[n] === 2) {
-        r = 20;
-        g = 4;
-        b = 4;
-        ri = 1;
-        gi = 2.2;
-        bi = 2.2;
-      } else if (z[n] === 3) {
-        r = 5;
-        g = 20;
-        b = 4;
-        ri = 2.2;
-        gi = 1;
-        bi = 2.2;
-      } else if (z[n] === 4) {
-        r = 4;
-        g = 4;
-        b = 20;
-        ri = 2.2;
-        gi = 2.2;
-        bi = 1;
-      } else if (z[n] === 5) {
-        r = 20;
-        g = 20;
-        b = 4;
-        ri = 1;
-        gi = 1;
-        bi = 2.2;
-      }
-
-      ctx.fillStyle = setrgb(r * 7 * i, g * 7 * i, b * 7 * i);
-      drawPath(ctx, [
-        [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
-        [px, 256 + py - squareSize * 0.6],
-        [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
-        [px, 256 + py - squareSize * 1],
-      ]);
-
-      ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
-      drawPath(ctx, [
-        [px, 256 + py],
-        [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
-        [px, 256 + py - squareSize * 0.3],
-      ]);
-
-      ctx.fillStyle = setrgb(r * 4 * i, g * 4 * i, b * 4 * i);
-      drawPath(ctx, [
-        [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
-        [px, 256 + py],
-        [px, 256 + py - squareSize * 0.3],
-      ]);
-
-      ctx.fillStyle = setrgb(r * ri * 8 * i, g * gi * 8 * i, b * bi * 8 * i);
-      drawPath(ctx, [
-        [px, 256 + py - squareSize * 0.3],
-        [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
-        [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
-        [px, 256 + py - squareSize * 0.6],
-      ]);
-
-      ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
-      drawPath(ctx, [
-        [px, 256 + py - squareSize * 0.3],
-        [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
-        [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
-        [px, 256 + py - squareSize * 0.6],
-      ]);
+      drawGem(ctx, n, py, px, i);
     }
 
     if (
@@ -403,6 +227,116 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
     if (n === cursorY * gridSize - cursorX + 1) {
       drawCursorFront(ctx);
     }
+  }
+};
+
+const drawGem = (
+  ctx: CanvasRenderingContext2D,
+  n: number,
+  py: number,
+  px: number,
+  i: number
+) => {
+  let r = 0,
+    g = 0,
+    b = 0,
+    ri = 0,
+    gi = 0,
+    bi = 0;
+
+  if (z[n] === 1) {
+    r = 5;
+    g = 5;
+    b = 5;
+    ri = 2.2;
+    gi = 2.2;
+    bi = 2.2;
+  } else if (z[n] === 2) {
+    r = 20;
+    g = 4;
+    b = 4;
+    ri = 1;
+    gi = 2.2;
+    bi = 2.2;
+  } else if (z[n] === 3) {
+    r = 5;
+    g = 20;
+    b = 4;
+    ri = 2.2;
+    gi = 1;
+    bi = 2.2;
+  } else if (z[n] === 4) {
+    r = 4;
+    g = 4;
+    b = 20;
+    ri = 2.2;
+    gi = 2.2;
+    bi = 1;
+  } else if (z[n] === 5) {
+    r = 20;
+    g = 20;
+    b = 4;
+    ri = 1;
+    gi = 1;
+    bi = 2.2;
+  }
+
+  ctx.fillStyle = setrgb(r * 7 * i, g * 7 * i, b * 7 * i);
+  drawPath(ctx, [
+    [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
+    [px, 256 + py - squareSize * 0.6],
+    [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
+    [px, 256 + py - squareSize * 1],
+  ]);
+
+  ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
+  drawPath(ctx, [
+    [px, 256 + py],
+    [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
+    [px, 256 + py - squareSize * 0.3],
+  ]);
+
+  ctx.fillStyle = setrgb(r * 4 * i, g * 4 * i, b * 4 * i);
+  drawPath(ctx, [
+    [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
+    [px, 256 + py],
+    [px, 256 + py - squareSize * 0.3],
+  ]);
+
+  ctx.fillStyle = setrgb(r * ri * 8 * i, g * gi * 8 * i, b * bi * 8 * i);
+  drawPath(ctx, [
+    [px, 256 + py - squareSize * 0.3],
+    [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
+    [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
+    [px, 256 + py - squareSize * 0.6],
+  ]);
+
+  ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
+  drawPath(ctx, [
+    [px, 256 + py - squareSize * 0.3],
+    [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
+    [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
+    [px, 256 + py - squareSize * 0.6],
+  ]);
+};
+
+const drawTiles = (ctx: CanvasRenderingContext2D) => {
+  for (let n = 1; n <= gridSize * gridSize; n++) {
+    const px = x[n] * squareSize + y[n] * squareSize;
+    const py = (y[n] * squareSize) / 2 - (x[n] * squareSize) / 2;
+
+    ctx.fillStyle =
+      (x[n] + y[n]) % 2 === 0 ? setrgb(100, 70, 50) : setrgb(100, 100, 100);
+    drawPath(ctx, [
+      [px - squareSize, 256 + py],
+      [px + squareSize, 256 + py],
+      [px, 256 + py - squareSize / 2],
+    ]);
+    drawPath(ctx, [
+      [px - squareSize, 256 + py],
+      [px + squareSize, 256 + py],
+      [px, 256 + py + squareSize / 2],
+    ]);
   }
 };
 
@@ -438,6 +372,7 @@ export function gemsGame(
     // Draw the game elements
     drawBackground(ctx);
     generateBoard();
+    drawTiles(ctx);
     drawStuff(ctx);
 
     // Set RGB color for vertex 1 of the first triangle
