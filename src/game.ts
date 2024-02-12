@@ -20,16 +20,14 @@ const z: number[] = [];
 
 const drawPath = (
   ctx: CanvasRenderingContext2D,
-  coords: number[],
+  coords: [number, number][],
   fill: boolean = true
 ) => {
   ctx.beginPath();
-  let x = coords.shift() || 0;
-  let y = coords.shift() || 0;
+  let [x, y] = coords.shift() || [0, 0];
   ctx.moveTo(x, y);
   while (coords.length) {
-    x = coords.shift() || 0;
-    y = coords.shift() || 0;
+    [x, y] = coords.shift() || [0, 0];
     ctx.lineTo(x, y);
   }
   ctx.closePath();
@@ -44,7 +42,12 @@ const drawBackground = (ctx: CanvasRenderingContext2D) => {
   gradient.addColorStop(1, "rgb(50, 0, 0)");
 
   ctx.fillStyle = gradient;
-  drawPath(ctx, [0, 0, 640, 0, 640, 512, 0, 512]);
+  drawPath(ctx, [
+    [0, 0],
+    [640, 0],
+    [640, 512],
+    [0, 512],
+  ]);
 };
 
 const drawTileEdge = (
@@ -57,14 +60,10 @@ const drawTileEdge = (
   ctx.fillStyle = fillStyle;
   const dy = (gridSize * squareSize) / 2;
   drawPath(ctx, [
-    posX - dx,
-    posY,
-    posX - dx,
-    posY + boardThickness,
-    midX,
-    midY + boardThickness + dy,
-    midX,
-    midY + dy,
+    [posX - dx, posY],
+    [posX - dx, posY + boardThickness],
+    [midX, midY + boardThickness + dy],
+    [midX, midY + dy],
   ]);
 };
 
@@ -93,28 +92,54 @@ function drawCursorBack(ctx: CanvasRenderingContext2D) {
     (cursorX + cursorY) % 2 ? setrgb(0, 0, 160) : setrgb(160, 160, 160);
 
   drawPath(ctx, [
-    px - squareSize,
-    py,
-    px,
-    py - 0.5 * squareSize,
-    px + squareSize,
-    py,
+    [px - squareSize, py],
+    [px, py - 0.5 * squareSize],
+    [px + squareSize, py],
   ]);
   drawPath(ctx, [
-    px - squareSize,
-    py,
-    px,
-    py + 0.5 * squareSize,
-    px + squareSize,
-    py,
+    [px - squareSize, py],
+    [px, py + 0.5 * squareSize],
+    [px + squareSize, py],
   ]);
 
   ctx.fillStyle = setrgb(255, 255, 255);
-  drawPath(ctx, [px - squareSize, py, px, py - 0.5 * squareSize], false);
-  drawPath(ctx, [px + squareSize, py, px, py - 0.5 * squareSize]), false;
-  drawPath(ctx, [px, py - squareSize * 0.5, px, py - squareSize * 1.9], false);
-  drawPath(ctx, [px + squareSize, py, px, py - 0.5 * squareSize], false);
-  drawPath(ctx, [px, py - squareSize * 0.5, px, py - squareSize * 1.9], false);
+  drawPath(
+    ctx,
+    [
+      [px - squareSize, py],
+      [px, py - 0.5 * squareSize],
+    ],
+    false
+  );
+  drawPath(ctx, [
+    [px + squareSize, py],
+    [px, py - 0.5 * squareSize],
+  ]),
+    false;
+  drawPath(
+    ctx,
+    [
+      [px, py - squareSize * 0.5],
+      [px, py - squareSize * 1.9],
+    ],
+    false
+  );
+  drawPath(
+    ctx,
+    [
+      [px + squareSize, py],
+      [px, py - 0.5 * squareSize],
+    ],
+    false
+  );
+  drawPath(
+    ctx,
+    [
+      [px, py - squareSize * 0.5],
+      [px, py - squareSize * 1.9],
+    ],
+    false
+  );
 }
 
 function drawCursorFront(ctx: CanvasRenderingContext2D) {
@@ -122,7 +147,14 @@ function drawCursorFront(ctx: CanvasRenderingContext2D) {
   const py = 256 + (cursorY * squareSize) / 2 - (cursorX * squareSize) / 2;
 
   ctx.strokeStyle = setrgb(255, 255, 255);
-  drawPath(ctx, [px, py + squareSize * 0.5, px, py - squareSize * 0.9], false);
+  drawPath(
+    ctx,
+    [
+      [px, py + squareSize * 0.5],
+      [px, py - squareSize * 0.9],
+    ],
+    false
+  );
   /*
   drawPath(
     ctx,
@@ -134,46 +166,81 @@ function drawCursorFront(ctx: CanvasRenderingContext2D) {
    */
   drawPath(
     ctx,
-    [px - squareSize, py, px - squareSize, py - squareSize * 1.4],
+    [[px - squareSize, py], [px - squareSize], [py - squareSize * 1.4]],
     false
   );
   drawPath(
     ctx,
-    [px - squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+    [
+      [px - squareSize, py - squareSize * 1.4],
+      [px, py - 1.9 * squareSize],
+    ],
     false
   );
   drawPath(
     ctx,
-    [px + squareSize, py, px + squareSize, py - squareSize * 1.4],
+    [
+      [px + squareSize, py],
+      [px + squareSize, py - squareSize * 1.4],
+    ],
     false
   );
   drawPath(
     ctx,
-    [px - squareSize, py, px - squareSize, py - squareSize * 1.4],
+    [
+      [px - squareSize, py],
+      [px - squareSize, py - squareSize * 1.4],
+    ],
     false
   ),
     drawPath(
       ctx,
-      [px - squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+      [
+        [px - squareSize, py - squareSize * 1.4],
+        [px, py - 1.9 * squareSize],
+      ],
       false
     );
   drawPath(
     ctx,
-    [px - squareSize, py - squareSize * 1.4, px, py - 0.9 * squareSize],
-    false
-  );
-  drawPath(ctx, [px - squareSize, py, px, py + squareSize * 0.5], false);
-  drawPath(
-    ctx,
-    [px + squareSize, py - squareSize * 1.4, px, py - 1.9 * squareSize],
+    [
+      [px - squareSize, py - squareSize * 1.4],
+      [px, py - 0.9 * squareSize],
+    ],
     false
   );
   drawPath(
     ctx,
-    [px + squareSize, py - squareSize * 1.4, px, py - 0.9 * squareSize],
+    [
+      [px - squareSize, py],
+      [px, py + squareSize * 0.5],
+    ],
     false
   );
-  drawPath(ctx, [px + squareSize, py, px, py + squareSize * 0.5], false);
+  drawPath(
+    ctx,
+    [
+      [px + squareSize, py - squareSize * 1.4],
+      [px, py - 1.9 * squareSize],
+    ],
+    false
+  );
+  drawPath(
+    ctx,
+    [
+      [px + squareSize, py - squareSize * 1.4],
+      [px, py - 0.9 * squareSize],
+    ],
+    false
+  );
+  drawPath(
+    ctx,
+    [
+      [px + squareSize, py],
+      [px, py + squareSize * 0.5],
+    ],
+    false
+  );
 }
 
 const drawStuff = (ctx: CanvasRenderingContext2D) => {
@@ -184,20 +251,14 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle =
       (x[n] + y[n]) % 2 === 0 ? setrgb(100, 70, 50) : setrgb(100, 100, 100);
     drawPath(ctx, [
-      px - squareSize,
-      256 + py,
-      px + squareSize,
-      256 + py,
-      px,
-      256 + py - squareSize / 2,
+      [px - squareSize, 256 + py],
+      [px + squareSize, 256 + py],
+      [px, 256 + py - squareSize / 2],
     ]);
     drawPath(ctx, [
-      px - squareSize,
-      256 + py,
-      px + squareSize,
-      256 + py,
-      px,
-      256 + py + squareSize / 2,
+      [px - squareSize, 256 + py],
+      [px + squareSize, 256 + py],
+      [px, 256 + py + squareSize / 2],
     ]);
   }
 
@@ -226,36 +287,24 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
     if (z[n] === 10) {
       ctx.fillStyle = setrgb(80 * i, 80 * i, 80 * i);
       drawPath(ctx, [
-        px - squareSize,
-        256 + py - squareSize * 0.5,
-        px,
-        256 + py,
-        px + squareSize,
-        256 + py - squareSize * 0.5,
-        px,
-        256 + py - squareSize,
+        [px - squareSize, 256 + py - squareSize * 0.5],
+        [px, 256 + py],
+        [px + squareSize, 256 + py - squareSize * 0.5],
+        [px, 256 + py - squareSize],
       ]);
       ctx.fillStyle = setrgb(50 * i, 50 * i, 50 * i);
       drawPath(ctx, [
-        px,
-        256 + py + squareSize * 0.5,
-        px - squareSize,
-        256 + py,
-        px - squareSize,
-        256 + py - squareSize * 0.5,
-        px,
-        256 + py,
+        [px, 256 + py + squareSize * 0.5],
+        [px - squareSize, 256 + py],
+        [px - squareSize, 256 + py - squareSize * 0.5],
+        [px, 256 + py],
       ]);
       ctx.fillStyle = setrgb(60 * i, 60 * i, 60 * i);
       drawPath(ctx, [
-        px,
-        256 + py + squareSize * 0.5,
-        px + squareSize,
-        256 + py,
-        px + squareSize,
-        256 + py - squareSize * 0.5,
-        px,
-        256 + py,
+        [px, 256 + py + squareSize * 0.5],
+        [px + squareSize, 256 + py],
+        [px + squareSize, 256 + py - squareSize * 0.5],
+        [px, 256 + py],
       ]);
     } else if (z[n] !== 0) {
       let r = 0,
@@ -304,58 +353,40 @@ const drawStuff = (ctx: CanvasRenderingContext2D) => {
 
       ctx.fillStyle = setrgb(r * 7 * i, g * 7 * i, b * 7 * i);
       drawPath(ctx, [
-        px - squareSize * 0.4,
-        256 + py - squareSize * 0.8,
-        px,
-        256 + py - squareSize * 0.6,
-        px + squareSize * 0.4,
-        256 + py - squareSize * 0.8,
-        px,
-        256 + py - squareSize * 1,
+        [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
+        [px, 256 + py - squareSize * 0.6],
+        [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
+        [px, 256 + py - squareSize * 1],
       ]);
 
       ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
       drawPath(ctx, [
-        px,
-        256 + py,
-        px + squareSize * 0.6,
-        256 + py - squareSize * 0.6,
-        px,
-        256 + py - squareSize * 0.3,
+        [px, 256 + py],
+        [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
+        [px, 256 + py - squareSize * 0.3],
       ]);
 
       ctx.fillStyle = setrgb(r * 4 * i, g * 4 * i, b * 4 * i);
       drawPath(ctx, [
-        px - squareSize * 0.6,
-        256 + py - squareSize * 0.6,
-        px,
-        256 + py,
-        px,
-        256 + py - squareSize * 0.3,
+        [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
+        [px, 256 + py],
+        [px, 256 + py - squareSize * 0.3],
       ]);
 
       ctx.fillStyle = setrgb(r * ri * 8 * i, g * gi * 8 * i, b * bi * 8 * i);
       drawPath(ctx, [
-        px,
-        256 + py - squareSize * 0.3,
-        px + squareSize * 0.6,
-        256 + py - squareSize * 0.6,
-        px + squareSize * 0.4,
-        256 + py - squareSize * 0.8,
-        px,
-        256 + py - squareSize * 0.6,
+        [px, 256 + py - squareSize * 0.3],
+        [px + squareSize * 0.6, 256 + py - squareSize * 0.6],
+        [px + squareSize * 0.4, 256 + py - squareSize * 0.8],
+        [px, 256 + py - squareSize * 0.6],
       ]);
 
       ctx.fillStyle = setrgb(r * 6 * i, g * 6 * i, b * 6 * i);
       drawPath(ctx, [
-        px,
-        256 + py - squareSize * 0.3,
-        px - squareSize * 0.6,
-        256 + py - squareSize * 0.6,
-        px - squareSize * 0.4,
-        256 + py - squareSize * 0.8,
-        px,
-        256 + py - squareSize * 0.6,
+        [px, 256 + py - squareSize * 0.3],
+        [px - squareSize * 0.6, 256 + py - squareSize * 0.6],
+        [px - squareSize * 0.4, 256 + py - squareSize * 0.8],
+        [px, 256 + py - squareSize * 0.6],
       ]);
     }
 
