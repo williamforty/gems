@@ -2,6 +2,7 @@ import { drawBackground } from "./drawBackground";
 import { drawBoard } from "./drawBoard";
 import { drawStuff } from "./drawStuff";
 import { drawTiles } from "./drawTiles";
+import { generateBoard } from "./generateBoard";
 
 export const gridSize = 9;
 export const squareSize = 320 / (gridSize + 1);
@@ -14,22 +15,7 @@ let c = 0;
 // Game number
 const game = 510256994;
 
-const x: number[] = [];
-const y: number[] = [];
 const z: number[] = [];
-
-const generateBoard = () => {
-  for (let n = 1; n <= gridSize ** 2; n++) {
-    x[n] = -(((n - 1) % gridSize) + 1) + gridSize + 1;
-    y[n] = Math.floor((gridSize - 1 + n) / gridSize);
-    z[n] = Math.floor((game / n) % 15);
-    if (z[n] >= 12) {
-      z[n] = 1;
-    } else if (z[n] > 5 || z[n] === 0) {
-      z[n] = 10;
-    }
-  }
-};
 
 export function gemsGame(
   canvas: HTMLCanvasElement,
@@ -56,7 +42,10 @@ export function gemsGame(
   let mouseX = 1;
   let mouseY = 1;
 
-  generateBoard();
+  const board = generateBoard(game, gridSize);
+  board.forEach((b) => {
+    z[b.n] = b.z;
+  });
 
   function gameLoop() {
     // Clear the canvas
@@ -65,8 +54,8 @@ export function gemsGame(
     // Draw the game elements
     drawBackground(ctx);
     drawBoard(ctx);
-    drawTiles(ctx, x, y);
-    drawStuff(ctx, cursorX, cursorY, targetCursorX, targetCursorY, x, y, z);
+    drawTiles(ctx);
+    drawStuff(ctx, cursorX, cursorY, targetCursorX, targetCursorY, z);
 
     // Request the next animation frame
     requestAnimationFrame(gameLoop);

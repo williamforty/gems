@@ -9,44 +9,36 @@ export const drawStuff = (
   cursorY: number,
   targetCursorX: number,
   targetCursorY: number,
-  x: number[],
-  y: number[],
   z: number[]
 ) => {
-  // Drawing the items
-  for (let n = 1; n <= gridSize * gridSize; n++) {
-    let i;
+  for (let y = 1; y <= gridSize; y++) {
+    for (let x = gridSize; x >= 1; x--) {
+      const NNNNNNN = (y - 1) * gridSize + x;
+      let i;
+      const c = 16384;
 
-    const c = 16384;
-
-    if ((c & 16384) === 16384 && x[n] === cursorX && y[n] === cursorY) {
-      drawCursorBack(ctx, cursorX, cursorY);
-      i = 1.3;
-    } else if (n === cursorY * gridSize - cursorX + 1) {
-      // drawCursorBack(ctx);
-      i = 1.3;
-    } else {
       i = 1;
-    }
+      if ((c & 16384) === 16384 && x === cursorX && y === cursorY) {
+        drawCursorBack(ctx, cursorX, cursorY);
+        i = 1.3;
+      }
 
-    const px = (x[n] + y[n]) * squareSize;
-    const py = ((y[n] - x[n]) * squareSize) / 2;
+      const px = (x + y) * squareSize;
+      const py = ((y - x) * squareSize) / 2;
 
-    if (z[n] === 10) {
-      drawBlock(ctx, px, py, i);
-    } else if (z[n] !== 0) {
-      drawGem(ctx, z, n, py, px, i);
-    }
+      if (z[NNNNNNN] === 10) {
+        drawBlock(ctx, px, py, i);
+      } else if (z[NNNNNNN] !== 0) {
+        drawGem(ctx, z, NNNNNNN, py, px, i);
+      }
 
-    if (
-      (c & 16384) === 16384 &&
-      n === targetCursorY * gridSize - targetCursorX + 1
-    ) {
-      // drawing_target_cursors_front();
-    }
+      if ((c & 16384) === 16384 && x === targetCursorX && y === targetCursorY) {
+        // drawing_target_cursors_front();
+      }
 
-    if (x[n] === cursorX && y[n] === cursorY) {
-      drawCursorFront(ctx, cursorX, cursorY);
+      if (x === cursorX && y === cursorY) {
+        drawCursorFront(ctx, cursorX, cursorY);
+      }
     }
   }
 };
